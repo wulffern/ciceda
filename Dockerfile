@@ -6,6 +6,11 @@ ENV REFRESHED_AT 2018-03-18
 USER 0
 
 #- install eda tools
+RUN apt-get update -y
 RUN apt-get install -y iverilog ngspice gtkwave xcircuit gwave
+
+RUN apt-get install -y make git
+
+RUN mkdir /home/headless
 
 USER 1000

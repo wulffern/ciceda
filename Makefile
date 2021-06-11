@@ -31,6 +31,3 @@ all:
 
 run:
 	docker run -it -p 5901:5901 -e VNC_RESOLUTION=1920x1080 -e VNC_PW=ciceda  -v `pwd`/:/headless/eda ciceda bash
-
-#run-cl:
-#	docker run --rm -it -v `pwd`/:/home/headless/eda ${CONT} bash
