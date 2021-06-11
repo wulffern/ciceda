@@ -7,7 +7,7 @@ tools, and even then, the truth is, they are not great.
 So, expecting open source EDA tools to be a polished, easy to use, easy to learn
 tools is too much to ask.
 
-Luckliy, at the beginning of the integrated circuit journy we don't need the
+Luckliy, at the beginning of the integrated circuit journey we don't need the
 full blown comercial tools. At the beginning, we need to understand the
 principles of SPICE, Verilog, how to write the files, how to run the
 simulations, and how to view the results.
