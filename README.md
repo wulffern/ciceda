@@ -1,4 +1,4 @@
-# cicede
+# ciceda (Custom IC EDA)
 
 Getting started with SPICE and verilog can be a daunting task. Companies that
 make integrated circuits spend millions on Electronic Design Assistance (EDA)
