@@ -19,6 +19,12 @@ For now though, let's focus on the transistors, resistor,  and the
 building blocks for digital circuits, the digital gates.
 
 # Tools
+
+## Docker
+Docker is something you must know about. It is a really good way to create small
+virtual machines on any platform. https://www.docker.com
+
+
 ## Ngspice SPICE Simulator
 ngspice is the open source spice simulator for electric and electronic circuits.
 See more at http://ngspice.sourceforge.net
