@@ -12,8 +12,8 @@ full blown comercial tools. At the beginning, we need to understand the
 principles of SPICE, Verilog, how to write the files, how to run the
 simulations, and how to view the results.
 
-The difference from open source EDA tools and the commercial ones is that it's
-easier to make complex systems, and believe me, ICs are very complex.
+The difference between open source EDA tools and the commercial tools is that it's
+easier to make complex systems with the commercial tools, and believe me, ICs are very complex.
 
 For now though, let's focus on the transistors, resistor,  and the
 building blocks for digital circuits, the digital gates.
