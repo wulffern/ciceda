@@ -24,10 +24,16 @@
 ##  SOFTWARE.
 ##
 ######################################################################
+
 DATE = $(shell date +%Y-%m-%d)
 
-all:
-	docker build   -t ciceda .
+VER=0.2.0
 
 run:
+	docker run -it -p 5901:5901 -e VNC_RESOLUTION=1920x1080 -e VNC_PW=ciceda  -v `pwd`/:/headless/eda wulffern/ciceda:${VER} bash
+
+build:
+	docker build   -t ciceda .
+
+runl:
 	docker run -it -p 5901:5901 -e VNC_RESOLUTION=1920x1080 -e VNC_PW=ciceda  -v `pwd`/:/headless/eda ciceda bash
