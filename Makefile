@@ -27,10 +27,9 @@
 
 DATE = $(shell date +%Y-%m-%d)
 
-VER=0.2.0
 
 run:
-	docker run -it -p 5901:5901 -e VNC_RESOLUTION=1920x1080 -e VNC_PW=ciceda  -v `pwd`/:/headless/eda wulffern/ciceda:${VER} bash
+	docker run -it -p 5901:5901 -e VNC_RESOLUTION=1920x1080 -e VNC_PW=ciceda  -v `pwd`/:/headless/eda wulffern/ciceda:0.2.0 bash
 
 build:
 	docker build   -t ciceda .
