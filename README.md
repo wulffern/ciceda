@@ -53,13 +53,16 @@ Install docker from [docker.com](http://docker.com)
 
 Clone this repository
 
-  git clone http://github.com/wulffern/ciceda
-  
+``` sh
+git clone https://github.com/wulffern/ciceda
+```
   
 ## MacOS
 Start ciceda 
 
-   ./ciceda_mac.sh
+``` sh
+./ciceda_mac.sh
+```
 
 In finder, select Go -> Connect to server and enter vnc://localhost:5901,
 password ciceda
@@ -69,22 +72,30 @@ password ciceda
 
 ## SPICE
 There are a few examples in ~/eda/spice/, for example 
+``` sh
+cd ~/eda/spice/NCHIO
+ngspice tb_nchio.spi
+```
 
-   cd ~/eda/spice/NCHIO
-   ngspice tb_nchio.spi
+
   
 ## Verilog
 Examples for verilog are in ~/eda/verilog, for example
-
-  cd ~/eda/verilog/
-  
+``` sh
+cd ~/eda/verilog/
+```
+ 
 Start waveform viewer
+``` sh
+gtkwave &
+```
 
-  gtkwave &
-  
 Run simulation
+``` sh
+make
+```
 
-  make
+  
   
 In GTKWave, File -> Open New Tab. Find counter/test.vcd
 
