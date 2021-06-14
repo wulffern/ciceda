@@ -46,11 +46,47 @@ VCD/EVCD files and allows their viewing. Documentation in pdf format can be
 found http://gtkwave.sourceforge.net/gtkwave.pdf.
 http://gtkwave.sourceforge.net
 
+
+# Getting started
+
+Install docker from [docker.com](http://docker.com)
+
+Clone this repository
+
+  git clone http://github.com/wulffern/ciceda
+  
+  
+## MacOS
+Start ciceda 
+
+   ./ciceda_mac.sh
+
+In finder, select Go -> Connect to server and enter vnc://localhost:5901,
+password ciceda
+
+
 # Examples
 
 ## SPICE
+There are a few examples in ~/eda/spice/, for example 
 
+   cd ~/eda/spice/NCHIO
+   ngspice tb_nchio.spi
+  
 ## Verilog
+Examples for verilog are in ~/eda/verilog, for example
+
+  cd ~/eda/verilog/
+  
+Start waveform viewer
+
+  gtkwave &
+  
+Run simulation
+
+  make
+  
+In GTKWave, File -> Open New Tab. Find counter/test.vcd
 
 
 # Support
