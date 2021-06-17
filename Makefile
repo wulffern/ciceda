@@ -27,12 +27,16 @@
 
 DATE = $(shell date +%Y-%m-%d)
 
+RES=1920x1080
 
-run:
-	docker run -it -p 5901:5901 -e VNC_RESOLUTION=1920x1080 -e VNC_PW=ciceda  -v `pwd`/:/headless/eda wulffern/ciceda:0.2.0 bash
-
-build:
-	docker build   -t ciceda .
 
 runl:
-	docker run -it -p 5901:5901 -e VNC_RESOLUTION=1920x1080 -e VNC_PW=ciceda  -v `pwd`/:/headless/eda ciceda bash
+	docker run -it -p 5901:5901 -e VNC_RESOLUTION=${RES} -e VNC_PW=ciceda  -v `pwd`/:/headless/eda wulffern/ciceda:0.2.0 bash
+
+build:
+	-mkdir ./scr/user/doom.d/
+	-cp ~/.doom.d/* ./src/user/doom.d/
+	docker build  -t ciceda .
+
+runl:
+	docker run -it -p 5901:5901 -e VNC_RESOLUTION=${RES} -e VNC_PW=ciceda  -v `pwd`/:/headless/eda ciceda bash
