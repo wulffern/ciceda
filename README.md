@@ -64,6 +64,12 @@ Start ciceda
 ./ciceda_mac.sh
 ```
 
+Which runs the command 
+
+``` sh
+docker run -it -p 5901:5901 -e VNC_RESOLUTION=1920x1080 -e VNC_PW=ciceda  -v `pwd`/:/headless/eda wulffern/ciceda:0.2.0 bash
+```
+
 In finder, select Go -> Connect to server and enter vnc://localhost:5901,
 password ciceda
 
