@@ -106,19 +106,18 @@ USER 0
 #-----------------------------------------------------------------------------
 # Setup Code
 #-----------------------------------------------------------------------------
-#WORKDIR /tmp/
+WORKDIR /tmp/
 #RUN apt install -y software-properties-common apt-transport-https wget
 #RUN wget https://packages.microsoft.com/config/ubuntu/20.10/packages-microsoft-prod.deb
 #RUN apt install packages-microsoft-prod.deb
 #COPY ./scr/install/microsoft.asc /tmp/microsoft.asc
-#RUN cat /tmp/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
-#RUN curl -sSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
-#RUN install -o root -g root -m 644 packages.microsoft.gpg /etc/apt/trusted.gpg.d/
-#RUN sh -c 'echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/trusted.gpg.d/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" > /etc/apt/sources.list.d/vscode.list'
-#RUN rm -f packages.microsoft.gpg
-#RUN sudo apt install apt-transport-https
-#RUN sudo apt update
-#RUN sudo apt install code # or code-insiders
+RUN curl -sSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
+RUN install -o root -g root -m 644 packages.microsoft.gpg /etc/apt/trusted.gpg.d/
+RUN sh -c 'echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/trusted.gpg.d/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" > /etc/apt/sources.list.d/vscode.list'
+RUN rm -f packages.microsoft.gpg
+RUN sudo apt install apt-transport-https
+RUN sudo apt update
+RUN sudo apt install code # or code-insiders
 
 
 #RUN wget -q https://packages.microsoft.com/keys/microsoft.asc -O/etc/apt/trusted.gpg.d/microsoft.gpg
