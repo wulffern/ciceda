@@ -25,9 +25,9 @@ Docker is something you must know about. It is a really good way to create small
 virtual machines on any platform. https://www.docker.com
 
 
-## Ngspice SPICE Simulator
-ngspice is the open source spice simulator for electric and electronic circuits.
-See more at http://ngspice.sourceforge.net
+## AIM-Spice
+AIM-Spice is a free SPICE simulator developed by Trond Ytterdal at NTNU.
+See more at http://aimspice.com
 
 ## Icarus Verilog Simulator
 Icarus Verilog is a Verilog simulation and synthesis tool. It operates as a

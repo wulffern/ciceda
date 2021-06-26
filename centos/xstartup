@@ -1,0 +1,3 @@
+#!/bin/sh
+# Uncomment the following two lines for normal desktop:
+startlxqt &

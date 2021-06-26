@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 
 alias sc='source ~/.bashrc'
-alias xx='xterm -fg white -bg midnightblue &'
+alias xx='xterm -fg white -bg gray19 &'
 
 function set_ps(){
 local l_for="\[\033[0;32m\]";
 local l_back="\[\033[0;00m\]";
 
-local PS_1="$l_for\u@\W\\$ $l_back "
+local PS_1="$l_for\u_doc@\W\\$ $l_back "
 PS1=$PS_1
 }
 
@@ -22,3 +22,10 @@ case $TERM in
 esac
 
 export PATH="/usr/local/opt/qt/bin:~/.emacs.d/bin:$PATH"
+
+export DISPLAY=host.docker.internal:0
+
+
+[ -e "$HOME/.dircolors" ] && DIR_COLORS="$HOME/.dircolors"
+[ -e "$DIR_COLORS" ] || DIR_COLORS=""
+eval "`dircolors -b $DIR_COLORS`"
