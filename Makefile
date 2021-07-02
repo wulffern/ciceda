@@ -27,14 +27,8 @@
 
 DATE = $(shell date +%Y-%m-%d)
 
-RES=1920x1080
-
-runl:
-	docker run -it -p 5901:5901 -e VNC_RESOLUTION=${RES} -e VNC_PW=ciceda  -v `pwd`/:/headless/eda ciceda bash
-
-
 build_centos:
 	docker build  -t wulffern/ciceda:centos_latest -f centos/Dockerfile .
 
 run:
-	docker run --rm -it -p 5900:5900 -v pro:/home/ciceda/pro -i wulffern/ciceda:centos_latest bash -l
+	docker run --rm -it -p 5900:5900 -v `pwd`:/home/ciceda/pro -i wulffern/ciceda:centos_latest bash --login

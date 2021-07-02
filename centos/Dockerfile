@@ -69,7 +69,7 @@ RUN chmod 755 /bin/aimspice
 #-----------------------------------------------------------------------------
 RUN yum -y install python36-tkinter
 USER ciceda
-RUN pip3 install --user matplotlib numpy pandas click
+RUN pip3 install --user matplotlib numpy pandas click tikzplotlib
 USER 0
 
 #-----------------------------------------------------------------------------
