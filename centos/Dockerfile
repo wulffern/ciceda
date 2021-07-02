@@ -23,7 +23,9 @@ USER 0
 #-----------------------------------------------------------------------------
 RUN yum install -y tigervnc-server
 RUN yum install -y xterm sudo
-RUN yum install -y lxqt* --exclude=lxqt-*-devel
+#RUN yum groupinstall -y "X Window system"
+RUN yum groupinstall -y xfce
+#RUN yum install -y lxqt* --exclude=lxqt-*-devel
 
 USER ciceda
 RUN   echo -e 'ciceda\nciceda\n' | vncpasswd
@@ -68,9 +70,8 @@ RUN chmod 755 /bin/aimspice
 # Setup Python
 #-----------------------------------------------------------------------------
 RUN yum -y install python36-tkinter
-USER ciceda
-RUN pip3 install --user matplotlib numpy pandas click tikzplotlib
-USER 0
+RUN pip3 install matplotlib numpy pandas click tikzplotlib
+
 
 #-----------------------------------------------------------------------------
 # Setup USER
