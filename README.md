@@ -2,8 +2,6 @@
 
 Docker image for EDA design
 
-
-
 # Intalled Tools ciceda:ubuntu_latest
 
 For absolute latest info, see the ubuntu/Dockerfile
@@ -37,9 +35,10 @@ Tools:
       [https://github.com/wulffern/cicpy](https://github.com/wulffern/cicpy)
     - ciccheatgen: Cheat sheet generator [https://github.com/wulffern/ciccheatgen](https://github.com/wulffern/ciccheatgen)
 - **octave* free matlab
+
 # Getting started
 
-Look in the Makefile, and the docker file. 
+Look in the Makefile, and the ubuntu/Dockerfile 
 
 To test ciceda, do
 
