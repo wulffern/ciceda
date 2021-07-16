@@ -20,12 +20,14 @@ RUN apt-get update -q && \
 	export DEBIAN_FRONTEND=noninteractive && \
     apt-get install -y --no-install-recommends wget curl rsync netcat mg vim bzip2 zip unzip && \
     apt-get install -y --no-install-recommends libx11-6 libxcb1 libxau6 && \
-    apt-get install -y --no-install-recommends tigervnc-standalone-server xvfb dbus-x11 x11-utils && \
+    apt-get install -y --no-install-recommends  xvfb dbus-x11 x11-utils && \
     apt-get install -y --no-install-recommends xfonts-base xfonts-75dpi xfonts-100dpi && \
     apt-get install -y --no-install-recommends python3-pip python3-dev  && \
     apt-get install -y --no-install-recommends libssl-dev && \
-    apt-get install -y --no-install-recommends xterm sudo && \
+    apt-get install -y --no-install-recommends xterm xfce4-terminal sudo && \
+    apt-get purge -y pm-utils xscreensaver* && \
     apt-get install -y iverilog ngspice gtkwave xcircuit yosys make git emacs && \
+    apt-get install -y tigervnc-standalone-server  tigervnc-common &&\
     apt-get install -y xfce4 && \
     apt-get autoclean -y && \
     apt-get autoremove -y && \
