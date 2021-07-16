@@ -1,110 +1,57 @@
 # ciceda (Custom IC EDA)
 
-Getting started with SPICE and verilog can be a daunting task. Companies that
-make integrated circuits spend millions on Electronic Design Assistance (EDA)
-tools, and even then, the truth is, they are not great. 
-
-So, expecting open source EDA tools to be a polished, easy to use, easy to learn
-tools is too much to ask.
-
-Luckliy, at the beginning of the integrated circuit journey we don't need the
-full blown comercial tools. At the beginning, we need to understand the
-principles of SPICE, Verilog, how to write the files, how to run the
-simulations, and how to view the results.
-
-The difference between open source EDA tools and the commercial tools is that it's
-easier to make complex systems with the commercial tools, and believe me, ICs are very complex.
-
-For now though, let's focus on the transistors, resistor,  and the
-building blocks for digital circuits, the digital gates.
-
-# Tools
-
-## Docker
-Docker is something you must know about. It is a really good way to create small
-virtual machines on any platform. https://www.docker.com
+Docker image for EDA design
 
 
-## AIM-Spice
-AIM-Spice is a free SPICE simulator developed by Trond Ytterdal at NTNU.
-See more at http://aimspice.com
 
-## Icarus Verilog Simulator
-Icarus Verilog is a Verilog simulation and synthesis tool. It operates as a
-compiler, compiling source code written in Verilog (IEEE-1364) into some target
-format. For batch simulation, the compiler can generate an intermediate form
-called vvp assembly. This intermediate form is executed by the ``vvp'' command.
-For synthesis, the compiler generates netlists in the desired format.
+# Intalled Tools ciceda:ubuntu_latest
 
-http://iverilog.icarus.com
-https://iverilog.fandom.com/wiki/
+For absolute latest info, see the ubuntu/Dockerfile
 
-## GTKWave
-GTKWave is a fully featured GTK+ based wave viewer for Unix, Win32, and Mac OSX
-which reads LXT, LXT2, VZT, FST, and GHW files as well as standard Verilog
-VCD/EVCD files and allows their viewing. Documentation in pdf format can be
-found http://gtkwave.sourceforge.net/gtkwave.pdf.
-http://gtkwave.sourceforge.net
+Tools:
 
-
+- **AIM-Spice** free SPICE simulator [aimspice.com](http://aimspice.com)
+- **iverilog** free verilog simulator [Icarus Verilog](http://iverilog.icarus.com)
+- **GTKWave** free wavform viewer [gtkwave.sourceforge.net](http://gtkwave.sourceforge.net)  
+- **ngspice** free SPICE simulator
+  [ngspice.sourceforge.net](http://ngspice.sourceforge.net)
+- **python3** Python programming language [python.org](http://python.org)
+  - matplotlib: plot graphs in python
+  - numpy: maths on vectors
+  - pandas: maths on tables
+  - click: command line interface 
+  - tikzplotlib: Convert matplotlib graphs to tikz (for latex)
+- **Text Editors**:
+  - emacs
+  - vim
+  - nano
+  - geany
+  - gedit
+- **custom IC creator tools** (stuff I've made)
+    - cic: ASCII to layout generator [https://github.com/wulffern/ciccreator](https://github.com/wulffern/ciccreator)
+    - cicpacgen: package outline generator
+    [https://github.com/wulffern/cicpacgen](https://github.com/wulffern/cicpacgen)
+    - cicsim: Simulation orchestration
+      [https://github.com/wulffern/cicsim](https://github.com/wulffern/cicsim)
+    - cicpy: Python frontend to cic
+      [https://github.com/wulffern/cicpy](https://github.com/wulffern/cicpy)
+    - ciccheatgen: Cheat sheet generator [https://github.com/wulffern/ciccheatgen](https://github.com/wulffern/ciccheatgen)
+- **octave* free matlab
 # Getting started
 
-Install docker from [docker.com](http://docker.com)
+Look in the Makefile, and the docker file. 
 
-Clone this repository
-
-``` sh
-git clone https://github.com/wulffern/ciceda
-```
-  
-## MacOS
-Start ciceda 
+To test ciceda, do
 
 ``` sh
-./ciceda_mac.sh
+docker run --rm -it -p 5900:5900 -v `pwd`:/home/ciceda/pro -i wulffern/ciceda:ubuntu_latest bash --login
 ```
-
-Which runs the command 
 
 ``` sh
-docker run -it -p 5901:5901 -e VNC_RESOLUTION=1920x1080 -e VNC_PW=ciceda  -v `pwd`/:/headless/eda wulffern/ciceda:0.2.1 bash
+ciceda@~$ vncserver :0
 ```
 
-In finder, select Go -> Connect to server and enter vnc://localhost:5901,
-password ciceda
-
-
-# Examples
-
-## SPICE
-There are a few examples in ~/eda/spice/, for example 
-``` sh
-cd ~/eda/spice/NCHIO
-ngspice tb_nchio.spi
-```
-
-
-  
-## Verilog
-Examples for verilog are in ~/eda/verilog, for example
-``` sh
-cd ~/eda/verilog/
-```
- 
-Start waveform viewer
-``` sh
-gtkwave &
-```
-
-Run simulation
-``` sh
-make
-```
-
-  
-  
-In GTKWave, File -> Open New Tab. Find counter/test.vcd
-
+And connect with a VNC viewer
 
 # Support
 I would try carsten@ntnu.no, however, I get about 100 emails per day, so my

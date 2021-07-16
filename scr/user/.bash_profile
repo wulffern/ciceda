@@ -11,5 +11,4 @@ fi
 PATH=$PATH:$HOME/.local/bin:$HOME/bin
 
 export PATH
-
-vncserver : 0 -geometry 1280x960
+export USER=ciceda

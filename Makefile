@@ -27,11 +27,16 @@
 
 DATE = $(shell date +%Y-%m-%d)
 
-build_centos:
-	docker build  -t wulffern/ciceda:centos_latest -f centos/Dockerfile .
-
 build_ubuntu:
 	docker build  -t wulffern/ciceda:ubuntu_latest -f ubuntu/Dockerfile .
 
+
+tagpush:
+	docker tag wulffern/ciceda:ubuntu_latest wulffern/ciceda:ubuntu_${TAG}
+	docker push wulffern/ciceda:ubuntu_${TAG}
+	docker push wulffern/ciceda:ubuntu_latest
+
+
+
 run:
-	docker run --rm -it -p 5900:5900 -v `pwd`:/home/ciceda/pro -i wulffern/ciceda:centos_latest bash --login
+	docker run --rm -it -p 5900:5900 -v `pwd`:/home/ciceda/pro -i wulffern/ciceda:ubuntu_latest bash --login

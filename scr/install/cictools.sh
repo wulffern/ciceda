@@ -1,15 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-apt install -y python3-pip
 
 git clone https://github.com/wulffern/cicpacgen.git
-pip install ./cicpacgen
+pip install ./cicpacgen -e
 
 git clone https://github.com/wulffern/cicsim.git
-pip install ./cicsim
+pip install ./cicsim -e
 
-#git clone https://github.com/wulffern/cicpy.git
-#pip install ./cicpy
+git clone https://github.com/wulffern/cicpy.git
+pip install ./cicpy -e
 
 git clone https://github.com/wulffern/ciccheatgen.git
