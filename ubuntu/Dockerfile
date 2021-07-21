@@ -1,10 +1,8 @@
 
-#FROM wulffern/docker-headless-vnc-container:0.2.0
 FROM ubuntu:groovy
+    MAINTAINER Carsten Wulff <carsten@wulff.no>
 # Switch to root user to install additional software
 USER 0
-
-
 
 #-----------------------------------------------------------------------------
 #- Install VNC Server
@@ -26,7 +24,7 @@ RUN apt-get update -q && \
     apt-get install -y --no-install-recommends libssl-dev && \
     apt-get install -y --no-install-recommends xterm xfce4-terminal sudo && \
     apt-get purge -y pm-utils xscreensaver* && \
-    apt-get install -y iverilog ngspice gtkwave xcircuit yosys make git emacs && \
+    apt-get install -y  ngspice xcircuit yosys make git emacs && \
     apt-get install -y tigervnc-standalone-server  tigervnc-common &&\
     apt-get install -y xfce4 && \
     apt-get autoclean -y && \
@@ -34,12 +32,14 @@ RUN apt-get update -q && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+RUN echo "\$localhost=\"no\"" > /etc/vnc.conf
 USER ciceda
 #RUN   echo -e 'cicedaubu\ncicedaubu\n' | vncpasswd
 #COPY --chown=ciceda:ciceda ./centos/xstartup .vnc/xstartup
 #RUN chmod 755 .vnc/xstartup
 #COPY --chown=ciceda:ciceda  ./centos/vncstart vncstart
 #RUN chmod 755 vncstart
+
 USER 0
 EXPOSE 5900
 
@@ -73,8 +73,8 @@ RUN apt-get update -q && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-COPY --chown=ciceda:ciceda ./tools/cic.linux_0.1.2 /bin/cic
-RUN chmod 755 /bin/cic
+COPY --chown=ciceda:ciceda ./tools/cic.linux_0.1.2 /opt/eda/bin/cic
+RUN chmod 755 /opt/eda/bin/cic
 
 
 #-----------------------------------------------------------------------------
@@ -95,10 +95,10 @@ USER 0
 #-----------------------------------------------------------------------------
 # Setup Aimspice
 #-----------------------------------------------------------------------------
-COPY ./aimspice/aimspicec /bin/aimspicec
-COPY ./aimspice/aimspicec /bin/aimspice
-RUN chmod 755 /bin/aimspicec
-RUN chmod 755 /bin/aimspice
+COPY ./aimspice/aimspicec /opt/eda/bin/aimspicec
+COPY ./aimspice/aimspicec /opt/eda/bin/aimspice
+RUN chmod 755 /opt/eda/bin/aimspicec
+RUN chmod 755 /opt/eda/bin/aimspice
 
 #-----------------------------------------------------------------------------
 # Setup Python
@@ -181,6 +181,48 @@ RUN apt-get update -q && \
     apt-get autoremove -y && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
+
+
+#-----------------------------------------------------------------------------
+# Setup gtkwave and iverilog
+#-----------------------------------------------------------------------------
+
+#RUN  cd /opt && git clone https://github.com/wulffern/eda.git
+
+WORKDIR /tmp
+RUN mkdir compile
+WORKDIR /tmp/compile
+
+RUN wget https://sourceforge.net/projects/gtkwave/files/gtkwave-3.3.104/gtkwave-3.3.104.tar.gz/download
+RUN tar zxvf download
+
+
+RUN  apt-get update -q && \
+    export DEBIAN_FRONTEND=noninteractive && \
+    apt-get install -y libjudy-dev && \
+    apt-get install -y libbz2-dev && \
+    apt-get install -y liblzma-dev && \
+    apt-get install -y libgconf2-dev && \
+    apt-get install -y libgtk2.0-dev && \
+    apt-get install -y tcl-dev  && \
+    apt-get install -y tk-dev && \
+    apt-get install -y gperf && \
+    apt-get install -y gtk2-engines-pixbuf && \
+    apt-get install -y bison flex && \
+    apt-get autoclean -y && \
+    apt-get autoremove -y && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN cd gtkwave-3.3.104 && ./configure --prefix /opt/eda --disable-tcl --disable-xy && make && make install
+
+RUN git clone https://github.com/steveicarus/iverilog.git
+
+RUN cd iverilog && git checkout v11_0 && sh autoconf.sh && ./configure --prefix /opt/eda && make && make install
+
+
+
+RUN rm -rf /tmp/compile
 
 #USER 1000
 WORKDIR /home/ciceda

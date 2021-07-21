@@ -1,0 +1,3 @@
+[submodule "eda"]
+	path = eda
+	url = git@github.com:wulffern/eda.git

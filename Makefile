@@ -30,6 +30,10 @@ DATE = $(shell date +%Y-%m-%d)
 build_ubuntu:
 	docker build  -t wulffern/ciceda:ubuntu_latest -f ubuntu/Dockerfile .
 
+.PHONY:eda
+eda:
+	docker run --rm -it  -v  `pwd`/eda:/home/ciceda/copy -u root  -i wulffern/ciceda:ubuntu_latest rsync -va /opt/eda/ /home/ciceda/copy/
+
 
 tagpush:
 	docker tag wulffern/ciceda:ubuntu_latest wulffern/ciceda:ubuntu_${TAG}
