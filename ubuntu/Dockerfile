@@ -129,26 +129,7 @@ RUN apt-get update -q && \
 #-----------------------------------------------------------------------------
 RUN cd /tmp; wget https://workcraft.org/_media/download/workcraft-v3.3.4-linux.tar.gz
 
-#-----------------------------------------------------------------------------
-# Setup gEda
-#-----------------------------------------------------------------------------
-#RUN apt install -y geda
 
-#-----------------------------------------------------------------------------
-# Setup Code
-#-----------------------------------------------------------------------------
-#WORKDIR /tmp/
-#RUN curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg && \
-#    install -o root -g root -m 644 microsoft.gpg /etc/apt/trusted.gpg.d/ &&\
-#    sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list' &&\
-#    apt-get update -q && \
-#    apt-get install -y apt-transport-https &&\
-#    apt update && \
-#    apt install code &&\
-#    apt-get autoclean -y && \
-#    apt-get autoremove -y && \
-#    apt-get clean && \
-#    rm -rf /var/lib/apt/lists/*
 
 
 #-----------------------------------------------------------------------------
@@ -183,15 +164,13 @@ RUN apt-get update -q && \
     rm -rf /var/lib/apt/lists/*
 
 
-#-----------------------------------------------------------------------------
-# Setup gtkwave and iverilog
-#-----------------------------------------------------------------------------
-
-#RUN  cd /opt && git clone https://github.com/wulffern/eda.git
-
 WORKDIR /tmp
 RUN mkdir compile
 WORKDIR /tmp/compile
+
+#-----------------------------------------------------------------------------
+# Compile gtkwave
+#-----------------------------------------------------------------------------
 
 RUN wget https://sourceforge.net/projects/gtkwave/files/gtkwave-3.3.104/gtkwave-3.3.104.tar.gz/download
 RUN tar zxvf download
@@ -216,14 +195,35 @@ RUN  apt-get update -q && \
 
 RUN cd gtkwave-3.3.104 && ./configure --prefix /opt/eda --disable-tcl --disable-xy && make && make install
 
+#-----------------------------------------------------------------------------
+# Compile iverilog
+#-----------------------------------------------------------------------------
+
 RUN git clone https://github.com/steveicarus/iverilog.git
 
 RUN cd iverilog && git checkout v11_0 && sh autoconf.sh && ./configure --prefix /opt/eda && make && make install
 
+RUN wget https://sourceforge.net/projects/ngspice/files/ng-spice-rework/34/ngspice-34.tar.gz/download
+
+RUN tar zxvf download.1
+
+#-----------------------------------------------------------------------------
+# Compile ngspice
+#-----------------------------------------------------------------------------
+
+RUN  apt-get update -q && \
+    export DEBIAN_FRONTEND=noninteractive && \
+    apt-get install -y libxaw7-dev  && \
+    apt-get autoclean -y && \
+    apt-get autoremove -y && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 
-RUN rm -rf /tmp/compile
+RUN cd ngspice-34 && ./configure --with-x  --disable-debug --with-readline=no --prefix /opt/eda && make && make install
 
-#USER 1000
+#RUN rm -rf /tmp/compile
+
+
 WORKDIR /home/ciceda
 USER ciceda
