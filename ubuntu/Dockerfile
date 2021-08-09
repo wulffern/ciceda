@@ -1,5 +1,5 @@
 
-FROM ubuntu:groovy
+FROM ubuntu:focal
     MAINTAINER Carsten Wulff <carsten@wulff.no>
 # Switch to root user to install additional software
 USER 0
@@ -18,30 +18,19 @@ RUN apt-get update -q && \
 	export DEBIAN_FRONTEND=noninteractive && \
     apt-get install -y --no-install-recommends wget curl rsync netcat mg vim bzip2 zip unzip && \
     apt-get install -y --no-install-recommends libx11-6 libxcb1 libxau6 && \
-    apt-get install -y --no-install-recommends  xvfb dbus-x11 x11-utils && \
+    apt-get install -y --no-install-recommends xvfb dbus-x11 x11-utils && \
+    apt-get install -y --no-install-recommends tightvncserver xvfb dbus-x11 x11-utils && \
     apt-get install -y --no-install-recommends xfonts-base xfonts-75dpi xfonts-100dpi && \
     apt-get install -y --no-install-recommends python3-pip python3-dev  && \
     apt-get install -y --no-install-recommends libssl-dev && \
     apt-get install -y --no-install-recommends xterm xfce4-terminal sudo && \
     apt-get purge -y pm-utils xscreensaver* && \
-    apt-get install -y  ngspice xcircuit yosys make git emacs && \
-    apt-get install -y tigervnc-standalone-server  tigervnc-common &&\
+    apt-get install -y  ngspice xcircuit yosys make git emacs libreadline-dev && \
     apt-get install -y xfce4 && \
     apt-get autoclean -y && \
     apt-get autoremove -y && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
-
-RUN echo "\$localhost=\"no\"" > /etc/vnc.conf
-USER ciceda
-#RUN   echo -e 'cicedaubu\ncicedaubu\n' | vncpasswd
-#COPY --chown=ciceda:ciceda ./centos/xstartup .vnc/xstartup
-#RUN chmod 755 .vnc/xstartup
-#COPY --chown=ciceda:ciceda  ./centos/vncstart vncstart
-#RUN chmod 755 vncstart
-
-USER 0
-EXPOSE 5900
 
 #-----------------------------------------------------------------------------
 #- Create user
@@ -53,6 +42,13 @@ RUN echo "ciceda  ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 USER ciceda
 WORKDIR /home/ciceda
 USER 0
+
+
+#Needed for tigervnc, Tiger does not work well on windows
+#apt-get install -y tigervnc-standalone-server  tigervnc-common &&\
+#RUN echo "\$localhost=\"no\"" > /etc/vnc.conf
+EXPOSE 5900
+
 
 
 #-----------------------------------------------------------------------------
@@ -73,6 +69,7 @@ RUN apt-get update -q && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+RUN cd /opt && git clone https://github.com/wulffern/eda.git
 COPY --chown=ciceda:ciceda ./tools/cic.linux_0.1.2 /opt/eda/bin/cic
 RUN chmod 755 /opt/eda/bin/cic
 
@@ -80,7 +77,6 @@ RUN chmod 755 /opt/eda/bin/cic
 #-----------------------------------------------------------------------------
 # Setup emacs
 #-----------------------------------------------------------------------------
-
 ADD --chown=ciceda:ciceda ./scr/elisp /home/ciceda/elisp
 RUN mkdir --parents /eda/install/
 COPY --chown=ciceda:ciceda ./scr/install/emacs.sh /eda/install/emacs_install.sh
@@ -103,7 +99,7 @@ RUN chmod 755 /opt/eda/bin/aimspice
 #-----------------------------------------------------------------------------
 # Setup Python
 #-----------------------------------------------------------------------------
-RUN pip3 install matplotlib numpy pandas click tikzplotlib pyyaml
+RUN pip3 install matplotlib numpy pandas click tikzplotlib pyyaml pygame
 
 #-----------------------------------------------------------------------------
 # Setup USER
@@ -127,15 +123,11 @@ RUN apt-get update -q && \
 #-----------------------------------------------------------------------------
 #- Workcraft
 #-----------------------------------------------------------------------------
-RUN cd /tmp; wget https://workcraft.org/_media/download/workcraft-v3.3.4-linux.tar.gz
-
-
-
+#RUN cd /tmp; wget https://workcraft.org/_media/download/workcraft-v3.3.4-linux.tar.gz
 
 #-----------------------------------------------------------------------------
 # Setup Code
 #-----------------------------------------------------------------------------
-
 WORKDIR /eda
 RUN git clone https://github.com/wulffern/cicpacgen.git && \
     pip install -e ./cicpacgen  && \
@@ -163,7 +155,6 @@ RUN apt-get update -q && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-
 WORKDIR /tmp
 RUN mkdir compile
 WORKDIR /tmp/compile
@@ -171,10 +162,8 @@ WORKDIR /tmp/compile
 #-----------------------------------------------------------------------------
 # Compile gtkwave
 #-----------------------------------------------------------------------------
-
 RUN wget https://sourceforge.net/projects/gtkwave/files/gtkwave-3.3.104/gtkwave-3.3.104.tar.gz/download
 RUN tar zxvf download
-
 
 RUN  apt-get update -q && \
     export DEBIAN_FRONTEND=noninteractive && \
@@ -200,17 +189,14 @@ RUN cd gtkwave-3.3.104 && ./configure --prefix /opt/eda --disable-tcl --disable-
 #-----------------------------------------------------------------------------
 
 RUN git clone https://github.com/steveicarus/iverilog.git
-
 RUN cd iverilog && git checkout v11_0 && sh autoconf.sh && ./configure --prefix /opt/eda && make && make install
 
-RUN wget https://sourceforge.net/projects/ngspice/files/ng-spice-rework/34/ngspice-34.tar.gz/download
-
-RUN tar zxvf download.1
 
 #-----------------------------------------------------------------------------
 # Compile ngspice
 #-----------------------------------------------------------------------------
-
+RUN wget https://sourceforge.net/projects/ngspice/files/ng-spice-rework/34/ngspice-34.tar.gz/download
+RUN tar zxvf download.1
 RUN  apt-get update -q && \
     export DEBIAN_FRONTEND=noninteractive && \
     apt-get install -y libxaw7-dev  && \
@@ -219,11 +205,17 @@ RUN  apt-get update -q && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-
 RUN cd ngspice-34 && ./configure --with-x  --disable-debug --with-readline=no --prefix /opt/eda && make && make install
 
-#RUN rm -rf /tmp/compile
 
+#-----------------------------------------------------------------------------
+# Compile yosys
+#-----------------------------------------------------------------------------
+RUN git clone https://github.com/YosysHQ/yosys.git && cd yosys && git checkout yosys-0.9
+RUN cd yosys && make config-gcc && make PREFIX=/opt/eda && make install PREFIX=/opt/eda
+
+
+RUN rm -rf /tmp/compile
 
 WORKDIR /home/ciceda
 USER ciceda

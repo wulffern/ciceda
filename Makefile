@@ -44,3 +44,6 @@ tagpush:
 
 run:
 	docker run --rm -it -p 5900:5900 -v `pwd`:/home/ciceda/pro -i wulffern/ciceda:ubuntu_latest bash --login
+
+runroot:
+	docker run --rm -it --user 0 -p 5900:5900 -v `pwd`:/home/ciceda/pro -i wulffern/ciceda:ubuntu_latest bash --login
