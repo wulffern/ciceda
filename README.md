@@ -2,7 +2,7 @@
 
 Docker image for EDA design
 
-# Intalled Tools ciceda:ubuntu_latest
+# Installed Tools ciceda:ubuntu_latest
 
 For absolute latest info, see the ubuntu/Dockerfile
 
