@@ -1,5 +1,5 @@
 
-FROM ubuntu:focal
+FROM ubuntu:groovy
     MAINTAINER Carsten Wulff <carsten@wulff.no>
 # Switch to root user to install additional software
 USER 0
