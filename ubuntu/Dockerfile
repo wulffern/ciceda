@@ -1,11 +1,12 @@
 
-FROM ubuntu:groovy
+FROM ubuntu:20.04
     MAINTAINER Carsten Wulff <carsten@wulff.no>
 # Switch to root user to install additional software
 USER 0
 
 #-----------------------------------------------------------------------------
 #- Install VNC Server
+#--packages
 #-----------------------------------------------------------------------------
 RUN apt-get update -q && \
 	export DEBIAN_FRONTEND=noninteractive && \
@@ -34,6 +35,7 @@ RUN apt-get update -q && \
 
 #-----------------------------------------------------------------------------
 #- Create user
+#--user
 #-----------------------------------------------------------------------------
 VOLUME ["/home/ciceda"]
 RUN useradd -ms /bin/bash ciceda
@@ -58,8 +60,9 @@ EXPOSE 5900
 #RUN wget https://www.klayout.org/downloads/Ubuntu-20/klayout_0.27.1-1_amd64.deb
 #RUN dpkg -i klayout_0.27.1-1_amd64.deb
 
-#-----------------------------------------------------------------------------
+#------ -----------------------------------------------------------------------
 #- Ciccreator
+#--cic
 #-----------------------------------------------------------------------------
 RUN apt-get update -q && \
 	export DEBIAN_FRONTEND=noninteractive && \
@@ -70,12 +73,12 @@ RUN apt-get update -q && \
     rm -rf /var/lib/apt/lists/*
 
 RUN cd /opt && git clone https://github.com/wulffern/eda.git
-COPY --chown=ciceda:ciceda ./tools/cic.linux_0.1.2 /opt/eda/bin/cic
 RUN chmod 755 /opt/eda/bin/cic
 
 
 #-----------------------------------------------------------------------------
 # Setup emacs
+#--emacs
 #-----------------------------------------------------------------------------
 ADD --chown=ciceda:ciceda ./scr/elisp /home/ciceda/elisp
 RUN mkdir --parents /eda/install/
@@ -90,6 +93,7 @@ USER 0
 
 #-----------------------------------------------------------------------------
 # Setup Aimspice
+#--aimspice
 #-----------------------------------------------------------------------------
 COPY ./aimspice/aimspicec /opt/eda/bin/aimspicec
 COPY ./aimspice/aimspicec /opt/eda/bin/aimspice
@@ -98,11 +102,13 @@ RUN chmod 755 /opt/eda/bin/aimspice
 
 #-----------------------------------------------------------------------------
 # Setup Python
+#--pip
 #-----------------------------------------------------------------------------
-RUN pip3 install matplotlib numpy pandas click tikzplotlib pyyaml pygame
+RUN pip3 install matplotlib numpy pandas click tikzplotlib pyyaml pygame svgwrite
 
 #-----------------------------------------------------------------------------
 # Setup USER
+#--usersetup
 #-----------------------------------------------------------------------------
 COPY --chown=ciceda:ciceda ./scr/user/bashrc .bashrc
 COPY --chown=ciceda:ciceda ./scr/user/.dircolors .dircolors
@@ -110,6 +116,7 @@ COPY --chown=ciceda:ciceda ./scr/user/.bash_profile .bash_profile
 
 #-----------------------------------------------------------------------------
 # Setup text editors
+#--textedit
 #-----------------------------------------------------------------------------
 RUN apt-get update -q && \
 	export DEBIAN_FRONTEND=noninteractive && \
@@ -126,7 +133,8 @@ RUN apt-get update -q && \
 #RUN cd /tmp; wget https://workcraft.org/_media/download/workcraft-v3.3.4-linux.tar.gz
 
 #-----------------------------------------------------------------------------
-# Setup Code
+# Setup CIC
+#--cic
 #-----------------------------------------------------------------------------
 WORKDIR /eda
 RUN git clone https://github.com/wulffern/cicpacgen.git && \
@@ -146,6 +154,7 @@ RUN chmod 755 .vnc/xstartup
 
 #-----------------------------------------------------------------------------
 # Setup octave
+#--octave
 #-----------------------------------------------------------------------------
 RUN apt-get update -q && \
 	export DEBIAN_FRONTEND=noninteractive && \
@@ -155,15 +164,16 @@ RUN apt-get update -q && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+#-----------------------------------------------------------------------------
+# Compile gtkwave
+#--eda
+#-----------------------------------------------------------------------------
 WORKDIR /tmp
 RUN mkdir compile
 WORKDIR /tmp/compile
 
-#-----------------------------------------------------------------------------
-# Compile gtkwave
-#-----------------------------------------------------------------------------
-RUN wget https://sourceforge.net/projects/gtkwave/files/gtkwave-3.3.104/gtkwave-3.3.104.tar.gz/download
-RUN tar zxvf download
+RUN wget http://gtkwave.sourceforge.net/gtkwave-3.3.111.tar.gz
+RUN tar zxvf gtkwave-3.3.111.tar.gz
 
 RUN  apt-get update -q && \
     export DEBIAN_FRONTEND=noninteractive && \
@@ -182,7 +192,7 @@ RUN  apt-get update -q && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-RUN cd gtkwave-3.3.104 && ./configure --prefix /opt/eda --disable-tcl --disable-xy && make && make install
+RUN cd gtkwave-3.3.111 && ./configure --prefix /opt/eda --disable-tcl --disable-xy && make && make install
 
 #-----------------------------------------------------------------------------
 # Compile iverilog
@@ -195,8 +205,8 @@ RUN cd iverilog && git checkout v11_0 && sh autoconf.sh && ./configure --prefix 
 #-----------------------------------------------------------------------------
 # Compile ngspice
 #-----------------------------------------------------------------------------
-RUN wget https://sourceforge.net/projects/ngspice/files/ng-spice-rework/34/ngspice-34.tar.gz/download
-RUN tar zxvf download.1
+RUN wget https://sourceforge.net/projects/ngspice/files/ng-spice-rework/36/ngspice-36.tar.gz/download
+RUN tar zxvf download
 RUN  apt-get update -q && \
     export DEBIAN_FRONTEND=noninteractive && \
     apt-get install -y libxaw7-dev  && \
@@ -205,17 +215,51 @@ RUN  apt-get update -q && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-RUN cd ngspice-34 && ./configure --with-x  --disable-debug --with-readline=no --prefix /opt/eda && make && make install
+RUN cd ngspice-36 && ./configure --with-x  --disable-debug --with-readline=no --prefix /opt/eda && make && make install
 
 
 #-----------------------------------------------------------------------------
 # Compile yosys
 #-----------------------------------------------------------------------------
-RUN git clone https://github.com/YosysHQ/yosys.git && cd yosys && git checkout yosys-0.9
+RUN git clone https://github.com/YosysHQ/yosys.git && cd yosys && git checkout yosys-0.17
 RUN cd yosys && make config-gcc && make PREFIX=/opt/eda && make install PREFIX=/opt/eda
 
 
+#-----------------------------------------------------------------------------
+# Compile magic
+#-----------------------------------------------------------------------------
+
+RUN  apt-get update -q && \
+    export DEBIAN_FRONTEND=noninteractive && \
+    apt-get install -y tcsh  && \
+    apt-get autoclean -y && \
+    apt-get autoremove -y && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN git clone git://opencircuitdesign.com/magic && cd magic && ./configure --prefix /opt/eda && make && make install
+
 RUN rm -rf /tmp/compile
 
+RUN apt-get update -q && \
+    export DEBIAN_FRONTEND=noninteractive && \
+    apt-get install -y openssh-server  && \
+    apt-get install -y qt5-default && \
+    apt-get autoclean -y && \
+    apt-get autoremove -y && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN mkdir /home/ciceda/.ssh
+COPY --chown=ciceda:ciceda ./ciceda_rsa.pub /home/ciceda/.ssh/authorized_keys
+RUN  chmod 600 /home/ciceda/.ssh/authorized_keys
+
+#RUN service ssh start
+
+RUN cat "XAuthLocation /opt/X11/bin/xauth" >> /etc/ssh/
+
+EXPOSE 22
+
 WORKDIR /home/ciceda
+
 USER ciceda

@@ -26,24 +26,25 @@
 ######################################################################
 
 DATE = $(shell date +%Y-%m-%d)
+TAG = develop_0.2.0
 
 build_ubuntu:
-	docker build  -t wulffern/ciceda:ubuntu_latest -f ubuntu/Dockerfile .
+	docker build  -t wulffern/ciceda:ubuntu_${TAG} -f ubuntu/Dockerfile .
 
 .PHONY:eda
 eda:
-	docker run --rm -it  -v  `pwd`/eda:/home/ciceda/copy -u root  -i wulffern/ciceda:ubuntu_latest rsync -va /opt/eda/ /home/ciceda/copy/
+	docker run --rm -it  -v  `pwd`/eda:/home/ciceda/copy -u root  -i wulffern/ciceda:ubuntu_${TAG} rsync -va /opt/eda/ /home/ciceda/copy/
 
 
 tagpush:
 	docker tag wulffern/ciceda:ubuntu_latest wulffern/ciceda:ubuntu_${TAG}
 	docker push wulffern/ciceda:ubuntu_${TAG}
-	docker push wulffern/ciceda:ubuntu_latest
+	#docker push wulffern/ciceda:ubuntu_latest
 
 
 
 run:
-	docker run --rm -it -p 5900:5900 -v `pwd`:/home/ciceda/pro -i wulffern/ciceda:ubuntu_latest bash --login
+	docker run --rm -it -p 5900:5900 -v `pwd`:/home/ciceda/pro -i wulffern/ciceda:ubuntu_${TAG} bash --login
 
 runroot:
-	docker run --rm -it --user 0 -p 5900:5900 -v `pwd`:/home/ciceda/pro -i wulffern/ciceda:ubuntu_latest bash --login
+	docker run --rm -it --user 0 -p 5900:5900 -v `pwd`:/home/ciceda/pro -i wulffern/ciceda:ubuntu_${TAG} bash --login
