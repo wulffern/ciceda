@@ -25,10 +25,27 @@ RUN apt-get update -q && \
     apt-get install -y --no-install-recommends python3-pip python3-dev  && \
     apt-get install -y --no-install-recommends libssl-dev && \
     apt-get install -y --no-install-recommends xterm xfce4-terminal sudo && \
+    apt-get install -y --no-install-recommends libqt5core5a  && \
+    apt-get install -y --no-install-recommends gedit nano geany    && \
+    apt-get install -y octave    && \
     apt-get purge -y pm-utils xscreensaver* && \
-    apt-get install -y  ngspice xcircuit yosys make git emacs libreadline-dev && \
+    apt-get install -y  xcircuit make git emacs libreadline-dev && \
+    apt-get install -y libjudy-dev && \
+    apt-get install -y libbz2-dev && \
+    apt-get install -y liblzma-dev && \
+    apt-get install -y libgconf2-dev && \
+    apt-get install -y libgtk2.0-dev && \
+    apt-get install -y tcl-dev  && \
+    apt-get install -y tk-dev && \
+    apt-get install -y gperf && \
+    apt-get install -y gtk2-engines-pixbuf && \
+    apt-get install -y bison flex && \
     apt-get install -y xfce4 && \
+    apt-get install -y libxaw7-dev  && \
+    apt-get install -y tcsh  && \
     apt-get autoclean -y && \
+    apt-get install -y openssh-server  && \
+    apt-get install -y qt5-default && \
     apt-get autoremove -y && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
@@ -46,11 +63,7 @@ WORKDIR /home/ciceda
 USER 0
 
 
-#Needed for tigervnc, Tiger does not work well on windows
-#apt-get install -y tigervnc-standalone-server  tigervnc-common &&\
-#RUN echo "\$localhost=\"no\"" > /etc/vnc.conf
 EXPOSE 5900
-
 
 
 #-----------------------------------------------------------------------------
@@ -60,25 +73,13 @@ EXPOSE 5900
 #RUN wget https://www.klayout.org/downloads/Ubuntu-20/klayout_0.27.1-1_amd64.deb
 #RUN dpkg -i klayout_0.27.1-1_amd64.deb
 
-#------ -----------------------------------------------------------------------
-#- Ciccreator
-#--cic
 #-----------------------------------------------------------------------------
-RUN apt-get update -q && \
-	export DEBIAN_FRONTEND=noninteractive && \
-    apt-get install -y --no-install-recommends libqt5core5a && \
-    apt-get autoclean -y && \
-    apt-get autoremove -y && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
+#- Linux EDA software
+#-----------------------------------------------------------------------------
 RUN cd /opt && git clone https://github.com/wulffern/eda.git
-RUN chmod 755 /opt/eda/bin/cic
-
 
 #-----------------------------------------------------------------------------
 # Setup emacs
-#--emacs
 #-----------------------------------------------------------------------------
 ADD --chown=ciceda:ciceda ./scr/elisp /home/ciceda/elisp
 RUN mkdir --parents /eda/install/
@@ -93,7 +94,6 @@ USER 0
 
 #-----------------------------------------------------------------------------
 # Setup Aimspice
-#--aimspice
 #-----------------------------------------------------------------------------
 COPY ./aimspice/aimspicec /opt/eda/bin/aimspicec
 COPY ./aimspice/aimspicec /opt/eda/bin/aimspice
@@ -102,30 +102,15 @@ RUN chmod 755 /opt/eda/bin/aimspice
 
 #-----------------------------------------------------------------------------
 # Setup Python
-#--pip
 #-----------------------------------------------------------------------------
 RUN pip3 install matplotlib numpy pandas click tikzplotlib pyyaml pygame svgwrite
 
 #-----------------------------------------------------------------------------
 # Setup USER
-#--usersetup
 #-----------------------------------------------------------------------------
 COPY --chown=ciceda:ciceda ./scr/user/bashrc .bashrc
 COPY --chown=ciceda:ciceda ./scr/user/.dircolors .dircolors
 COPY --chown=ciceda:ciceda ./scr/user/.bash_profile .bash_profile
-
-#-----------------------------------------------------------------------------
-# Setup text editors
-#--textedit
-#-----------------------------------------------------------------------------
-RUN apt-get update -q && \
-	export DEBIAN_FRONTEND=noninteractive && \
-    apt-get install -y --no-install-recommends gedit nano geany    && \
-    apt-get autoclean -y && \
-    apt-get autoremove -y && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
 
 #-----------------------------------------------------------------------------
 #- Workcraft
@@ -134,7 +119,6 @@ RUN apt-get update -q && \
 
 #-----------------------------------------------------------------------------
 # Setup CIC
-#--cic
 #-----------------------------------------------------------------------------
 WORKDIR /eda
 RUN git clone https://github.com/wulffern/cicpacgen.git && \
@@ -151,46 +135,20 @@ RUN mkdir .vnc && chown ciceda:ciceda .vnc
 COPY --chown=ciceda:ciceda ./scr/user/xstartup .vnc/xstartup
 RUN chmod 755 .vnc/xstartup
 
-
 #-----------------------------------------------------------------------------
-# Setup octave
-#--octave
-#-----------------------------------------------------------------------------
-RUN apt-get update -q && \
-	export DEBIAN_FRONTEND=noninteractive && \
-    apt-get install -y octave    && \
-    apt-get autoclean -y && \
-    apt-get autoremove -y && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
-#-----------------------------------------------------------------------------
-# Compile gtkwave
-#--eda
+# Start compile
 #-----------------------------------------------------------------------------
 WORKDIR /tmp
 RUN mkdir compile
 WORKDIR /tmp/compile
 
+#-----------------------------------------------------------------------------
+# Compile gtkwave
+#-----------------------------------------------------------------------------
+
+
 RUN wget http://gtkwave.sourceforge.net/gtkwave-3.3.111.tar.gz
 RUN tar zxvf gtkwave-3.3.111.tar.gz
-
-RUN  apt-get update -q && \
-    export DEBIAN_FRONTEND=noninteractive && \
-    apt-get install -y libjudy-dev && \
-    apt-get install -y libbz2-dev && \
-    apt-get install -y liblzma-dev && \
-    apt-get install -y libgconf2-dev && \
-    apt-get install -y libgtk2.0-dev && \
-    apt-get install -y tcl-dev  && \
-    apt-get install -y tk-dev && \
-    apt-get install -y gperf && \
-    apt-get install -y gtk2-engines-pixbuf && \
-    apt-get install -y bison flex && \
-    apt-get autoclean -y && \
-    apt-get autoremove -y && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
 
 RUN cd gtkwave-3.3.111 && ./configure --prefix /opt/eda --disable-tcl --disable-xy && make && make install
 
@@ -207,16 +165,8 @@ RUN cd iverilog && git checkout v11_0 && sh autoconf.sh && ./configure --prefix 
 #-----------------------------------------------------------------------------
 RUN wget https://sourceforge.net/projects/ngspice/files/ng-spice-rework/36/ngspice-36.tar.gz/download
 RUN tar zxvf download
-RUN  apt-get update -q && \
-    export DEBIAN_FRONTEND=noninteractive && \
-    apt-get install -y libxaw7-dev  && \
-    apt-get autoclean -y && \
-    apt-get autoremove -y && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
 
 RUN cd ngspice-36 && ./configure --with-x  --disable-debug --with-readline=no --prefix /opt/eda && make && make install
-
 
 #-----------------------------------------------------------------------------
 # Compile yosys
@@ -229,34 +179,28 @@ RUN cd yosys && make config-gcc && make PREFIX=/opt/eda && make install PREFIX=/
 # Compile magic
 #-----------------------------------------------------------------------------
 
-RUN  apt-get update -q && \
-    export DEBIAN_FRONTEND=noninteractive && \
-    apt-get install -y tcsh  && \
-    apt-get autoclean -y && \
-    apt-get autoremove -y && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
 RUN git clone git://opencircuitdesign.com/magic && cd magic && ./configure --prefix /opt/eda && make && make install
 
+
+#-----------------------------------------------------------------------------
+# Compile xschem
+#-----------------------------------------------------------------------------
+RUN git clone https://github.com/StefanSchippers/xschem.git && cd xschem && ./configure --prefix=/opt/eda && make && make install
+
+#-----------------------------------------------------------------------------
+# Cleanup compile
+#-----------------------------------------------------------------------------
 RUN rm -rf /tmp/compile
 
-RUN apt-get update -q && \
-    export DEBIAN_FRONTEND=noninteractive && \
-    apt-get install -y openssh-server  && \
-    apt-get install -y qt5-default && \
-    apt-get autoclean -y && \
-    apt-get autoremove -y && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
+#-----------------------------------------------------------------------------
+# Install ssh server
+#-----------------------------------------------------------------------------
 RUN mkdir /home/ciceda/.ssh
 COPY --chown=ciceda:ciceda ./ciceda_rsa.pub /home/ciceda/.ssh/authorized_keys
 RUN  chmod 600 /home/ciceda/.ssh/authorized_keys
 
-#RUN service ssh start
-
-RUN cat "XAuthLocation /opt/X11/bin/xauth" >> /etc/ssh/
+RUN echo -ne "XAuthLocation /opt/X11/bin/xauth\n" >> /etc/ssh/sshd_config
+RUN echo -ne "X11UseLocalhost no\n" >> /etc/ssh/sshd_config
 
 EXPOSE 22
 

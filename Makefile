@@ -26,10 +26,11 @@
 ######################################################################
 
 DATE = $(shell date +%Y-%m-%d)
-TAG = develop_0.2.0
+TAG = develop_0.2.1
 
 build_ubuntu:
 	docker build  -t wulffern/ciceda:ubuntu_${TAG} -f ubuntu/Dockerfile .
+
 
 .PHONY:eda
 eda:
