@@ -199,8 +199,12 @@ RUN mkdir /home/ciceda/.ssh
 COPY --chown=ciceda:ciceda ./ciceda_rsa.pub /home/ciceda/.ssh/authorized_keys
 RUN  chmod 600 /home/ciceda/.ssh/authorized_keys
 
-RUN echo -ne "XAuthLocation /opt/X11/bin/xauth\n" >> /etc/ssh/sshd_config
-RUN echo -ne "X11UseLocalhost no\n" >> /etc/ssh/sshd_config
+#RUN echo  "XAuthLocation /opt/X11/bin/xauth\n" >> /etc/ssh/sshd_config
+RUN echo  "X11UseLocalhost no\n" >> /etc/ssh/sshd_config
+
+RUN echo "set num_threads=8\nset ngbehavior=hsa\nset ng_nomodcheck\n" >> /home/ciceda/.spiceinit
+
+RUN echo "sudo service ssh restart\n" >> /home/ciceda/.bashrc
 
 EXPOSE 22
 
